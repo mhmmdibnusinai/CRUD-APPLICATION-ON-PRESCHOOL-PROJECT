@@ -1,13 +1,15 @@
+#all module required to run the programs
 import datetime
 import os
 import pyinputplus as pypi
 import csv
 from tabulate import tabulate
 
+
 def clear_screen():
 
     """
-    A function to clean the user interface
+    A function to clean the user interface/terminal
     """
     # For Windows
     if os.name == 'nt':
@@ -17,7 +19,7 @@ def clear_screen():
         _ = os.system('clear')
 def greetings():
     """
-    a fuction to show time as (Good morning, Good afternoon, Good evening based on time we accesing the terminal)
+    a fuction to display time as (Good morning, Good afternoon, Good evening based on time we accesing the terminal)
 
     Returns:
         _type_: String
@@ -25,7 +27,7 @@ def greetings():
     # Get the current time
     now = datetime.datetime.now()
 
-    # Determine the greeting
+    # Determine the greetings
     if now.hour < 12:
         greeting = "Good morning"
     elif now.hour < 17:
@@ -40,71 +42,109 @@ def create_student_data():
     this function use for inputing new student data into database called data.csv, it consist of defining variable that
     inputed as student data information such as below:
     """    
-    #input student data
-    Student_ID = pypi.inputInt("Enter student ID: ")
-    Name = pypi.inputStr("Enter student name: ")
-    Address = pypi.inputStr("Enter student address: ")
-    Age = pypi.inputInt("Enter student age: ")
-    Gender = pypi.inputChoice(
-    prompt=" 'Male' or 'Female' : ", choices=["Male", "Female"])
-    print(Gender)
-
     # Read the existing data
+    found = False
     students = []
     with open("data/data.csv", mode='r', newline='') as file:
         reader = csv.DictReader(file)
         for row in reader:
             students.append(row)
+            found = True
 
-    # Add the new student data
-    new_student = {'Student_ID': Student_ID, 'Name': Name,'Address': Address, 'Age': Age, 'Gender': Gender}
-    students.append(new_student)
+    if not found:
+        print("database is empty, procced to input new data..\n")
 
-    # Write the updated data back to the CSV file
-    with open("data/data.csv", mode='w', newline='') as file:
-        fieldnames = ['Student_ID', 'Name', 'Address', 'Age', 'Gender']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(students)
+    # Check for duplicate Student_ID
+    new_student_id = pypi.inputInt("Enter student ID: ")
+    found_duplicate = False
+
+    for student in students:
+        if int(student['Student_ID']) == new_student_id:
+            found_duplicate = True
+            exit = pypi.inputYesNo('Im sorry ID has already taken, press ENTER..', blank=True)
+            if exit == "yes" or exit == "":
+                break
+    
+    if not found_duplicate:
+        # Input student data
+        Name = pypi.inputStr("Enter student name: ")
+        Address = pypi.inputStr("Enter student address: ")
+        Age = pypi.inputInt("Enter student age: ")
+        Gender = pypi.inputChoice(prompt=" 'Male' or 'Female' : ", choices=["Male", "Female"])
+
+        # Create the new student dictionary
+        new_student = {'Student_ID': new_student_id, 'Name': Name,
+                       'Address': Address, 'Age': Age, 'Gender': Gender}
+
+        # Add the new student data to the existing list
+        students.append(new_student)
+
+        # Write the updated data back to the CSV file
+        with open("data/data.csv", mode='w', newline='') as file:
+            fieldnames = ['Student_ID', 'Name', 'Address', 'Age', 'Gender']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(students)
 
 def create_student_score():
     """
-    this function is use for inputing student score into database called student_score.csv, it consist  of defining variable that
-    inputed as student score information such as below:
-    """    
-    #input student data
-    Student_ID = pypi.inputInt("Enter student ID: ")
-    Name = pypi.inputStr("Enter student name: ")
-    GrossMotorDev = pypi.inputInt("Enter GMD(gross motor development): ")
-    FineMotorDev = pypi.inputInt("Enter FMD(fine motor development): ")
-    LangComm = pypi.inputInt("Enter Language & Communication): ")
-    SocEmo = pypi.inputInt("Enter Social & Emotional): ")
-    CogAbility = pypi.inputInt("Enter Cognitive & Ability): ")
-
-
+    this function use for inputing new student data into database called data.csv, it consist of defining variable that
+    inputed as student data information such as below:
+    """
     # Read the existing data
+    found = False
     students_score = []
     with open("data/student_score.csv", mode='r', newline='') as file:
         reader = csv.DictReader(file)
         for row in reader:
             students_score.append(row)
+            found = True
 
-    # Add the new student data
-    new_student_score = {'Student_ID': Student_ID, 'Name': Name,'GMD': GrossMotorDev, 'FMD': FineMotorDev, 'LangComm': LangComm, 'SocEmo':SocEmo, 'CogAbility':CogAbility}
-    students_score.append(new_student_score)
+    if not found:
+        print("database is empty, procced to input new data..\n")
 
-    # Write the updated data back to the CSV file
-    with open("data/student_score.csv", mode='w', newline='') as file:
-        fieldnames = ['Student_ID', 'Name', 'GMD', 'FMD', 'LangComm', 'SocEmo', 'CogAbility']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(students_score) 
+    # Check for duplicate Student_ID
+    Student_Score_ID = pypi.inputInt("Enter student ID: ")
+    found_duplicate = False
+
+    for student in students_score:
+        if int(student['Student_ID']) == Student_Score_ID:
+            found_duplicate = True
+            exit = pypi.inputYesNo(
+                'Im sorry ID has already taken, press ENTER..', blank=True)
+            if exit == "yes" or exit == "":
+                break
+
+    if not found_duplicate:
+        # Input student data
+        Name = pypi.inputStr("Enter student name: ")
+        GrossMotorDev = pypi.inputInt("Enter GMD(gross motor development): ")
+        FineMotorDev = pypi.inputInt("Enter FMD(fine motor development): ")
+        LangComm = pypi.inputInt("Enter Language & Communication): ")
+        SocEmo = pypi.inputInt("Enter Social & Emotional): ")
+        CogAbility = pypi.inputInt("Enter Cognitive & Ability): ")
+
+        # Create the new student dictionary
+        new_student = {'Student_ID': Student_Score_ID, 'Name': Name, 'GMD': GrossMotorDev,
+                       'FMD': FineMotorDev, 'LangComm': LangComm, 'SocEmo': SocEmo, 'CogAbility': CogAbility}
+
+        # Add the new student data to the existing list
+        students_score.append(new_student)
+
+        # Write the updated data back to the CSV file
+        with open("data/student_score.csv", mode='w', newline='') as file:
+            fieldnames = ['Student_ID', 'Name', 'GMD',
+                          'FMD', 'LangComm', 'SocEmo', 'CogAbility']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(students_score)
 
 def read_students_data():
     """this function created for displaying the outcome or the database by iterating each row in the reader which based on student data database
         and storing them into readStudentData variable, showing the into more readable output using tabulate then suggested to come back to
         previous menu after that and cleaning the interface using clear_screen function
     """    
+    found = False
     readStudentsData = []
     with open("data/data.csv", mode='r', newline='') as file:
         reader = csv.DictReader(file)
@@ -114,7 +154,12 @@ def read_students_data():
             print("Student Data of Tadika Mesra preschool")
             table = tabulate(readStudentsData, headers="keys", tablefmt="pretty")
             print(table)
-            
+            found = True
+
+    if not found:
+        clear_screen()
+        print("Database is empty..\n")
+
     exit = pypi.inputYesNo(
         prompt="Press 'ENTER' to back to previous menu or (yes/no)", blank=True
         )
@@ -128,6 +173,7 @@ def read_students_data_score():
         previous menu after that and cleaning the interface using clear_screen function
     
     """    
+    found = False
     ReadStudentsScore = []
     with open("data/student_score.csv", mode='r', newline='') as file:
         reader = csv.DictReader(file)
@@ -137,7 +183,11 @@ def read_students_data_score():
             print("Student Score of Tadika Mesra preschool")
             table = tabulate(ReadStudentsScore, headers="keys", tablefmt="pretty")
             print(table)
-            
+            found = True
+
+    if not found:
+        clear_screen()
+        print("Database is empty..\n")
     exit = pypi.inputYesNo(
             prompt="Press 'ENTER' to back to previous menu or (yes/no)", blank=True
             )
@@ -167,7 +217,7 @@ def read_certain_students_data():
             found = True
     if not found:
         clear_screen()
-        print("data is not found\n")
+        print("data is not found..\n")
 
     exit = pypi.inputYesNo(
         prompt="\n Press 'ENTER' to back to previous menu or (yes/no)", blank=True
@@ -181,6 +231,7 @@ def read_certain_students_data_score():
         identical as we already inputed it will start cleaing the terminal and print out the result
     """    
     student_id = pypi.inputInt("Enter certain student_ID: ")   
+    
     # Read the existing data
     students_score = []
     with open("data/student_score.csv", mode='r', newline='') as file:
@@ -216,6 +267,7 @@ def update_student_data():
     student_id = pypi.inputInt("Enter certain student_ID: ")
 
     # Read the existing data
+    found = False
     students_data = []
     with open("data/data.csv", mode='r', newline='') as file:
         reader = csv.DictReader(file)
@@ -226,6 +278,8 @@ def update_student_data():
     for student in students_data:
         if student['Student_ID'] == str(student_id):
             print(student)
+            found = True
+
             New_Name = pypi.inputStr(prompt="Enter New Name: ",blank=True)
             if New_Name != "":
                 student['Name'] = New_Name
@@ -245,6 +299,9 @@ def update_student_data():
             clear_screen()
             print("Showing certain student data updated..")
             print(student)
+
+    if not found:
+        print("\n Data not found..\n")
 
     #updating new values on csv file
     with open("data/data.csv", mode='w', newline='') as file:
@@ -268,6 +325,7 @@ def update_student_score_data():
     student_id = pypi.inputInt("Enter certain student_ID: ")
 
     # Read the existing data
+
     students_score = []
     with open("data/student_score.csv", mode='r', newline='') as file:
         reader = csv.DictReader(file)
@@ -275,9 +333,12 @@ def update_student_score_data():
             students_score.append(row)
    
     # Find and show choosen student data
+    found = False
     for student in students_score:
         if student['Student_ID'] == str(student_id):
             print(student)
+            found = True
+
             New_Name = pypi.inputStr(prompt="Enter New Name: ",blank=True)
             if New_Name != "":
                 student['Name'] = New_Name
@@ -301,10 +362,12 @@ def update_student_score_data():
             New_CogAbility = pypi.inputInt(prompt="Enter New CogAbility: ",blank=True)
             if New_CogAbility != "":
                 student['CogAbility'] = New_CogAbility
-            
+
             clear_screen()
             print("Showing certain student score updated..")
             print(student)
+    if not found:
+        print("\n Data not found..\n")
 
     #updating new values on csv file
     with open("data/student_score.csv", mode='w', newline='') as file:
@@ -417,6 +480,11 @@ def delete_student_score_data():
                 
 #Terminal Functions
 def Show():
+    """_summary_
+    this function means to display an interface of show menu which consist on how we going to do with the data, 
+    in this case this function mean to display a data inside database, the function also can display a certain data we choose.
+    """    
+    # to display the interface of the show data menu.
     while True:
         clear_screen()
         print(f"========================================================")
@@ -430,9 +498,10 @@ def Show():
         print(f"5. Back to previous menu..")
         print("========================================================")
 
+        # a function which giving an order to execute which program will run based on choices we made
         Choose_show = pypi.inputInt("Choose 1-5: ", min=1, max=5, default=1)
 
-        # Lakukan tindakan sesuai pilihan pengguna
+        # a function that gave us an option on which program on display menu interface will be executed
         if Choose_show == 1:
             read_students_data()
         elif Choose_show == 2:
@@ -449,6 +518,11 @@ def Show():
                 break
                          
 def Add():
+    """_summary_
+    this function means to display an interface of add menu which consist on how we going to do with the data, 
+    in this case this function mean to add a new data to database.
+    """    
+    # to display the interface of the delete menu.
     while True:
         clear_screen()
         print(f"========================================================")
@@ -460,9 +534,10 @@ def Add():
         print(f"3. Back to previous menu..")
         print("========================================================")
 
+        # a function which giving an order to execute which program will run based on choices we made
         Choose_add= pypi.inputInt("Choose 1-3: ", min=1, max=3, default=1)
 
-        # Lakukan tindakan sesuai pilihan pengguna
+        # a function that gave us an option on which program on add menu interface will be executed
         if Choose_add == 1:
             create_student_data()
         elif Choose_add == 2:
@@ -475,6 +550,11 @@ def Add():
                 break
                 
 def Update():
+    """_summary_
+    this function means to display an interface of update menu which consist on how we going to do with the data, 
+    in this case this function mean to changing the content of selected data.
+    """    
+    # to display the interface of the update menu.
     while True:
         clear_screen()
         print(f"========================================================")
@@ -486,9 +566,10 @@ def Update():
         print(f"3. Back to previous menu..")
         print("========================================================")
 
+        # a function which giving an order to execute which program will run based on choices we made
         Choose_update= pypi.inputInt("Choose 1-3: ", min=1, max=3, default=1)
 
-        # Lakukan tindakan sesuai pilihan pengguna
+        # a function that gave us an option on which program on update menu interface will be executed
         if Choose_update == 1:
             update_student_data()
         elif Choose_update == 2:
@@ -502,6 +583,11 @@ def Update():
                 break
                 
 def Delete():
+    """_summary_
+    this function means to display an interface of delete menu which consist on how we going to do with the data, 
+    in this case this function mean to deleting data we choose.
+    """    
+    # to display the interface of the delete menu.
     while True:
         clear_screen()
         print(f"========================================================")
@@ -513,9 +599,10 @@ def Delete():
         print(f"3. Back to previous menu..")
         print("========================================================")
 
+        # a function which giving an order to execute which program will run based on choices we made
         Choose_delete= pypi.inputInt("Choose 1-3: ", min=1, max=3, default=1)
 
-        # Lakukan tindakan sesuai pilihan pengguna
+        # a function that gave us an option on which program on delete menu interface will be executed
         if Choose_delete == 1:
             print(f"1. Deleting student data..  ")
             delete_student_data()

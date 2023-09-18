@@ -3,12 +3,16 @@ import pyinputplus as pyip
 import CRUD
 
 if __name__ == "__main__":
+    """_summary_
+    the main code which running the entire of programs
+    """    
     CRUD.clear_screen()
+    # to display the interface of the main programs
     while True:
         CRUD.clear_screen()
-        print(f"============={CRUD.greetings()}====================")
+        print(f"==============={CRUD.greetings()}================")
         print("-WELCOME TO TADIKA MESRA INFORMATION SYSTEM -")
-        print("==============================================")
+        print("=============================================")
 
         print(f"1. Show student data")
         print(f"2. Add student data")
@@ -18,7 +22,7 @@ if __name__ == "__main__":
 
         Choose = pyip.inputInt("Choose 1-5: ", min=1, max=5, default=1)
 
-        # Lakukan tindakan sesuai pilihan pengguna
+        # a function that gave us an option on which program on interface will be executed
         if Choose == 1:
             CRUD.Show()
         elif Choose == 2:
